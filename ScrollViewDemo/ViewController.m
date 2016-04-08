@@ -8,7 +8,7 @@
 
 #import "ViewController.h"
 #import "YXScrollView.h"
-@interface ViewController ()
+@interface ViewController ()<YXScorllViewdDelegate>
 
 @end
 
@@ -28,8 +28,14 @@
     [self.view addSubview:sv1];
     sv1.dataSource = @[@"banner_1",@"banner_2",@"banner_3", @"http://pic1.shejiben.com/hot_sjb/394_7979.jpg?1457506695",@"http://pic.shejiben.com/hot_sjb/394_7765.jpg?1457319423",@"http://pic.shejiben.com/hot_sjb/394_6575.jpg?1453084721"];
     [sv1 reloadData];
+    sv1.adDelegate = self;
+    
     
 }
+-(void)didSelectedPage:(long)index{
+    NSLog(@"%ld",index);
+}
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

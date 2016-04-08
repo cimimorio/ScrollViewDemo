@@ -8,7 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol YXScorllViewdDelegate <NSObject>
+
+@optional
+-(void)didSelectedPage:(long)index;
+
+@end
 @interface YXScrollView : UIScrollView
 @property(nonatomic, strong)NSArray * dataSource;
+@property (nonatomic, assign)id<YXScorllViewdDelegate> adDelegate;
 -(void)reloadData;
 @end

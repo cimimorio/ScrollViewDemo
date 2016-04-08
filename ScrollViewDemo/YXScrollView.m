@@ -8,7 +8,7 @@
 
 #import "YXScrollView.h"
 #import "UIImageView+WebCache.h"
-
+static const long BANNER_IMAGE_TAG_PERFIX = 329472934;
 
 #define CURRENT_WIDTH self.frame.size.width
 #define CURRENT_HEIGHT self.frame.size.height
@@ -37,10 +37,12 @@
 -(void)configUI{
     _leftImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, CURRENT_WIDTH, CURRENT_HEIGHT)];
     _leftImageView.backgroundColor = [UIColor redColor];
+    
     [self addSubview:_leftImageView];
     
     _centerImageView = [[UIImageView alloc]initWithFrame:CGRectMake(CURRENT_WIDTH, 0, CURRENT_WIDTH, CURRENT_HEIGHT)];
     _centerImageView.backgroundColor = [UIColor greenColor];
+    
     [self addSubview:_centerImageView];
     
     _rightImageView = [[UIImageView alloc]initWithFrame:CGRectMake(CURRENT_WIDTH * 2, 0, CURRENT_WIDTH, CURRENT_HEIGHT)];
@@ -52,6 +54,10 @@
     self.contentOffset = CGPointMake(CURRENT_WIDTH, 0);
     self.delegate = self;
     _currentIndex = 0;
+    
+    _centerImageView.userInteractionEnabled = YES;
+    UITapGestureRecognizer * tapGestureRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(centerImageViewTapGesture:)];
+    [_centerImageView addGestureRecognizer:tapGestureRecognizer];
 }
 
 -(void)createTimer{
@@ -70,6 +76,7 @@
         [self setImageWithName:[dataSource firstObject] toImageView:_centerImageView];
         [self setImageWithName:dataSource[(_currentIndex + 1) % dataSource.count] toImageView:_rightImageView];
         [self createPageControl];
+        _centerImageView.tag = BANNER_IMAGE_TAG_PERFIX + _currentIndex;
     }
 }
 
@@ -130,7 +137,7 @@
     }
     
     _pageControl.currentPage = _currentIndex;
-    
+    _centerImageView.tag = BANNER_IMAGE_TAG_PERFIX + _currentIndex;
     self.contentOffset = CGPointMake(CURRENT_WIDTH, 0);
 }
 
@@ -139,6 +146,16 @@
         [imageView sd_setImageWithURL:[NSURL URLWithString:name]];
     }else{
         [imageView setImage:[UIImage imageNamed:name]];
+    }
+}
+
+-(void)centerImageViewTapGesture:(UIGestureRecognizer *)gesture{
+    if ([_adDelegate respondsToSelector:@selector(didSelectedPage:)]) {
+        UIImageView * imageView = (UIImageView *)[gesture view];
+        long index = imageView.tag - BANNER_IMAGE_TAG_PERFIX;
+        [_adDelegate didSelectedPage:index];
+    }else{
+        NSLog(@"no protocol implements");
     }
 }
 @end
